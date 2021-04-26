@@ -5,44 +5,40 @@ import 'package:flutter/material.dart';
 import 'msg.dart';
 
 class chat extends StatelessWidget{
-  final name;String document;final currentId;
-  chat(this.name,this.document,this.currentId);
+  final name;String oppId;final currentId;
+  chat(this.name,this.oppId,this.currentId);
   Widget build(BuildContext context)
   {
     return MaterialApp(
       title: "Chat",
       theme: ThemeData(primaryColor: Colors.orange[400]),
-      home:Mainchat(name,document,currentId)
+      home:Mainchat(name,oppId,currentId)
     );
   }
 }
 class Mainchat extends StatefulWidget{
   final name;
-  final document;
+  final oppId;
   final currentId;
-  Mainchat(this.name,this.document,this.currentId);
+  Mainchat(this.name,this.oppId,this.currentId);
   @override
   _State createState(){
-    return _State(name,document.toString(),currentId);
+    return _State(name,oppId.toString(),currentId);
     }
 }
 
 class _State extends State<Mainchat>{
-  final name;final document;final currentId;
+  final name;final oppId;final currentId;
   bool isLoading = false;
-  _State(this.name,this.document,this.currentId);  
+  _State(this.name,this.oppId,this.currentId);  
   Query _dbref;
   List doc =[];
-
-
-
 void initState() 
 {
   setState(() {
     isLoading=false;
   });
-  _dbref = FirebaseDatabase.instance.reference().child("messages").child(document) ;
-
+  _dbref = FirebaseDatabase.instance.reference().child("messages").orderByChild("time") ;
   super.initState();
 }  
 
@@ -50,20 +46,31 @@ Widget msgview({Map msg})
 {
   // final FirebaseAuth auth =  FirebaseAuth.instance;
   //   User user = auth.currentUser;
-  //   final currentuser = user.displayName;
-  // print(currentId);
-  //   print(currentId==msg["sent"]);
-  return currentId!=msg["sent"]?Container(
+  //   final currentuser = user.displayName; 
+  if(msg["toId"]==currentId && msg["fromId"]==oppId) //recieved to me
+  {
+   return Container(
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
     child:Text(msg["msg"].toString(),style: TextStyle(fontSize: 27,color: Colors.black),)
-    ):Container(
+     )
+   ;
+  }
+  else if(msg["toId"]==oppId && msg["fromId"]==currentId)
+  {
+   return Container(
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.black),
     child:Text(msg["msg"].toString(),style: TextStyle(fontSize: 27,color: Colors.white),)
     );
+  }
+  else
+  {
+    print("Ds");
+    return(Text(""));
+  }
 }
 
    @override
@@ -84,11 +91,12 @@ Widget msgview({Map msg})
       Container(
         child:Expanded(
           child: FirebaseAnimatedList(query: _dbref, itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index){
+              print(snapshot.value);
               if(snapshot.value==null)
               return Container(child:Text("Say Hi to "+name));
               else{
-              Map ct = snapshot.value;
-              return msgview(msg:ct);
+                Map ct = snapshot.value;
+                return msgview(msg:ct);
               }
             }),
     ), 
@@ -102,12 +110,14 @@ Widget msgview({Map msg})
           decoration: InputDecoration(border: OutlineInputBorder(),hintText: "message here...",labelText: "Message",suffixIcon: IconButton(color: Colors.orange[400],icon: Icon(Icons.send),onPressed: (){
            if(c1.text!="")
            {
-             Message n = new Message(name,c1.text);
+            //  Message n = new Message(name,c1.text);
+             MessageNew mn = new MessageNew(currentId,oppId,c1.text);
             setState(() {
               c1.clear();
             });
-            sendMessage(n);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Message sent"),));
+            //sendMessage(n);
+            sendMessageNew(mn);
+            //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Message sent"),));
           }
           }
           ),

@@ -1,9 +1,12 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'main.dart';
 import 'app.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'search.dart';
+import 'auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'networkstats.dart';
@@ -162,12 +165,11 @@ signIn()  async
             _userName(),
             _password(),
             Container(
-                  padding: EdgeInsets.symmetric(vertical:30,horizontal: 70),
-                  child: Row(children: [
-                      ElevatedButton(
-                  child: Text(
-                    'Login',
-                  ),
+                  child: Column(children: [
+                    SizedBox(height: 10,),
+                      SignInButton(
+                  Buttons.Email,
+                  text: "Login with email",
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       _formKey.currentState.save();
@@ -179,14 +181,28 @@ signIn()  async
                   },
                 ),
                 SizedBox(width:20),
+                  SizedBox(),
+                  SignInButton(Buttons.GoogleDark, onPressed: ()async{
+                    AuthMethods authMethods = new AuthMethods();
+                      setState(() {
+                    isLoading=true;
+                  });
+                  authMethods.signInWithGoogle();
+                    setState(() {
+                    isLoading=false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+FirebaseAuth.instance.currentUser.displayName),));
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
+                  }),
+                  
                 ElevatedButton(onPressed: ()
                 {
                   Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => Signup()),
                 );
-                }, child: Text("signin")),
-                  ],),
+                }, child: Text("Sign Up Page")),
+                                ],),
                 )
           ],
           ),

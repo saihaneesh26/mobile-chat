@@ -1,3 +1,6 @@
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
+
 import "app.dart";
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -145,7 +148,7 @@ signUp() async
               password:c3.text
     );
     final db = FirebaseDatabase.instance.reference();
-    db.child("users").push().set({"name":c1.text,"email":c2.text});
+    db.child("users").child(userCredential.user.uid).set({"name":c1.text,"email":c2.text});
     final user = FirebaseAuth.instance.currentUser;
     user.updateProfile(displayName:c1.text);
     setState(() {
@@ -191,12 +194,11 @@ signUp() async
                 _buildEmail(),
                 _buildPassword(),
                 Container(
-                  padding: EdgeInsets.symmetric(vertical:30,horizontal: 70),
-                  child: Row(children: [
-                      ElevatedButton(
-                  child: Text(
-                    'SignUp',
-                  ),
+                  child: Column(children: [
+                    SizedBox(height: 10,),
+                      SignInButton(
+                  Buttons.Email,
+                  text: "Sign Up with email",
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       _formKey.currentState.save();
@@ -208,17 +210,30 @@ signUp() async
                   },
                 ),
                 SizedBox(width:20),
+               SignInButton(
+                Buttons.GoogleDark,
+                text: "Sign Up with Google",
+                onPressed: ()
+                {
+                  authMethods.signUpWithGoogle();
+                  Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => Login()),
+                );
+                }),
+
                 ElevatedButton(onPressed: ()
                 {
                   Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => Login()),
                 );
-                }, child: Text("Login")),
-                  ],),
+                }, child: Text("Login Page")),
+              ],),
                 ),
                 
                 SizedBox(height:10), 
+
               ],
             ),
           ),

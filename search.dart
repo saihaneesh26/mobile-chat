@@ -106,9 +106,8 @@ else
                               Query _dbref;
   List doc =[];
   var currentId;
-  
-    var document="";
-final FirebaseAuth auth =  FirebaseAuth.instance;
+  var oppId;
+  final FirebaseAuth auth =  FirebaseAuth.instance;
     User user = auth.currentUser;
     final currentuser = user.displayName;
    final db = await FirebaseDatabase.instance.reference().child("users").once().then((DataSnapshot snap)  async {
@@ -122,31 +121,19 @@ final FirebaseAuth auth =  FirebaseAuth.instance;
        for(var key in keys)
     {
      // print(currentuser+name);
-      if(values[key]["name"]==currentuser)
+      if(searchList[index].name==values[key]["name"])
       {
-        //print(key);
-        currentId=key;
-        doc.add(key.toString());
+        oppId = key;
       }
-      if(values[key]["name"]==searchList[index].name)
+      if(currentuser==values[key]["name"])
       {
-        //print(key);
-        doc.add(key.toString());
-       }
-       if(doc.length==2)
-       {
-          doc.sort();
-          doc.forEach((element) {
-          document+=element;
-            });
-          print(document);
-       // _dbref = FirebaseDatabase.instance.reference().child("messages").child("$document").orderByChild("time");
-        // return _dbref;
-        doc.clear();
-        //print(currentId);
-        if(document!="")
-        Navigator.push((context),MaterialPageRoute(builder: (context)=>Mainchat(searchList[index].name,document,currentId)));
-       }
+        currentId= key;
+      }      
+    }
+    if(currentId!=null&&oppId!=null)
+      Navigator.push((context),MaterialPageRoute(builder: (context)=>Mainchat(searchList[index].name,oppId,currentId)));
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Something is wrong'),));
     }
       }
      ).catchError((e){

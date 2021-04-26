@@ -1,7 +1,7 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
+
 
 class Message{
   String to,msg;
@@ -42,7 +42,7 @@ class returnMessage{
     }
     a.sort();
     if(a.length==2)
-    {
+    { 
       documentname = a[0].toString()+a[1].toString();
         final dbref = await FirebaseDatabase.instance.reference().child('messages');
         dbref.child(documentname).push().set({
@@ -56,6 +56,29 @@ class returnMessage{
   } );
 }
 
+class MessageNew{
+  String toId,fromId,msg;
+  MessageNew(this.toId,this.fromId,this.msg);
+}
+ sendMessageNew(MessageNew msg) async
+{
+  FirebaseAuth auth =  FirebaseAuth.instance;
+    User user = auth.currentUser;
+    final from = user.displayName;
+    var sendId;
+    var recieveId;
+  final db = await FirebaseDatabase.instance.reference().child("users").once().then((DataSnapshot snap) async {
+    var keys = snap.value.keys;
+      var values = snap.value;
+    final dbref = await FirebaseDatabase.instance.reference().child('messages');
+        dbref.push().set({
+        "time":DateTime.now().millisecondsSinceEpoch.toString(),
+        "msg":msg.msg,
+        "toId":msg.toId,
+        "fromId":msg.fromId
+      });//push messages
+  });//db
+}//end
 
 
 
