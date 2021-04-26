@@ -8,3 +8,4 @@ login and signup
 
 next 1.0.3
 -> show chats (edit the msgsing route to messages and add the to and from ids)
+->google signin
