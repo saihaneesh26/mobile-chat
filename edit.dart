@@ -9,7 +9,7 @@ class edit extends StatelessWidget{
   Widget build(BuildContext context)
   {
     return MaterialApp(
-      title: "Edit",
+      title: "CTZ",
       home:Edit(currentId),
       theme: ThemeData(primaryColor: Colors.orange[400]),
     );
@@ -57,7 +57,8 @@ Widget build(BuildContext context)
             isLoading=true;
           });
           var er =a.update(c1.text, c2.text,c3.text);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("d")));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("Updated Profile")));
+          Navigator.pop(context);
           setState(() {
             isLoading=false;
           });

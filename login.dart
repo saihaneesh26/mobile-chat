@@ -3,25 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'main.dart';
+import 'signup.dart';
 import 'app.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'networkstats.dart';
 
-Future <void> main() async
+void main()
 {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget{
+
   Widget build(BuildContext context)
   {
+
+    var current = FirebaseAuth.instance.currentUser;
     return  MaterialApp(
-      title:"Login",
+      title:"CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home:Login()
     );
@@ -37,7 +37,7 @@ class Login extends StatefulWidget{
   }
 
 class LoginState extends State<Login>{
-  
+
   final db = FirebaseDatabase.instance;
   String username,password;
   TextEditingController c1 = new TextEditingController();
@@ -47,7 +47,8 @@ class LoginState extends State<Login>{
   bool flag=true;
   bool isLoading=false;
   bool login = false;
-  
+  bool remember=false;
+
   String name;
 
 signIn()  async
@@ -64,17 +65,16 @@ signIn()  async
       }
       else
       {
-        try 
+        try
       {
         UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: c1.text,
         password:c2.text);
         setState(() {
-                      isLoading=false;
+            isLoading=false;
         });
-        
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+username),));
         Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+username),));
       } on FirebaseAuthException catch (e) {
         setState(() {
           isLoading=false;
@@ -88,7 +88,7 @@ signIn()  async
         }
       }
       }
-      
+
     }
 }
 
@@ -187,22 +187,25 @@ signIn()  async
                       setState(() {
                     isLoading=true;
                   });
-                  authMethods.signInWithGoogle();
+                  await authMethods.signInWithGoogle();
                     setState(() {
                     isLoading=false;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+FirebaseAuth.instance.currentUser.displayName),));
-                  Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
-                  }),
                   
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+FirebaseAuth.instance.currentUser.displayName),));                  
+                  }),
+
                 ElevatedButton(onPressed: ()
                 {
                   Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => Signup()),
                 );
-                }, child: Text("Sign Up Page")),
-                                ],),
+                }, child: Text("Sign Up Page")
+                ),
+
+              ],),
                 )
           ],
           ),

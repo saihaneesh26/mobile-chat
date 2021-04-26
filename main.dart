@@ -10,6 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'networkstats.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth.dart';
+var email;
 Future <void> main() async{ 
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
             }
             else if(snapshot.hasData)
             {
-              return Signup();
+              return Login();
             }
             else{
               return Center(
@@ -214,8 +215,8 @@ signUp() async
                 Buttons.GoogleDark,
                 text: "Sign Up with Google",
                 onPressed: ()
-                {
-                  authMethods.signUpWithGoogle();
+                async {
+                 await authMethods.signUpWithGoogle();
                   Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => Login()),

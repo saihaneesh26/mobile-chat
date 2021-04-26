@@ -13,7 +13,7 @@ class Search extends StatelessWidget{
   Widget build(BuildContext c)
   {
     return MaterialApp(
-      title: "data",
+      title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home: Search1(),
     );

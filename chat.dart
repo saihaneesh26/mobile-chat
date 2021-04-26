@@ -10,7 +10,7 @@ class chat extends StatelessWidget{
   Widget build(BuildContext context)
   {
     return MaterialApp(
-      title: "Chat",
+      title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home:Mainchat(name,oppId,currentId)
     );

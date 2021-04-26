@@ -7,10 +7,12 @@ import 'msg.dart';
 import'login.dart';
 import 'search.dart';
 import 'edit.dart';
+import 'sidebar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 var currentId;
 void main()
 {
+  
   runApp(A1());
 }
 
@@ -19,7 +21,7 @@ class A1 extends StatelessWidget{
   Widget build(BuildContext c)
   {
     return MaterialApp(
-      title: "App",
+      title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home: A2(),
     );
@@ -43,59 +45,14 @@ class A2state extends State<A2>
 void initState()
 {
    isLoading=false;
-   super.initState();
-   print(photo==null);
+   
     FirebaseAuth auth =  FirebaseAuth.instance;
     User user = auth.currentUser;
    currentName  = user.displayName;
-    final db = FirebaseDatabase.instance.reference().child("users").once().then((snap) {
-    var keys = snap.value.keys;
-    var values = snap.value;
-    for (var key in keys)
-    {
-      if(values[key]["name"]==currentName)
-      {
-        print(key);
-      }
-    }
-    setState(() {
-      name=user.displayName;
-    });
-    
-  });
-  }
-  send()
-  {
-    Message msg = new Message(c1.text,c2.text);
-
-    sendMessage(msg);
-    setState(() {
-        isLoading = false;
-      });
-      c2.clear();
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Message sent successfully to "+c1.text)));
+   super.initState();
   }
   Widget listview({Map l})
   {
-
-    // return Container(
-    //   padding: EdgeInsets.all(2),
-    //   margin: EdgeInsets.symmetric(horizontal: 4,vertical: 6),
-    //   decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.lightBlue[200]),
-    //   child:Row(
-    //   children:[
-    //      Container(
-    //        padding: EdgeInsets.all(2),
-    //        margin:EdgeInsets.symmetric(horizontal: 3,vertical: 1),
-    //        alignment: Alignment.topCenter,
-    //        child:IconButton(icon:Icon(Icons.message,), onPressed: (){
-    //         Navigator.push(context,MaterialPageRoute(builder: (context)=>Mainchat(l["name"],l["Id"],currentId)));
-    //        },)
-    //        ),
-    //      Text(l["name"],style: TextStyle(fontSize: 24),),
-    //   ]
-    // )
-    // ,);
     return GestureDetector(
       child:Container(
       padding: EdgeInsets.all(2),
@@ -124,15 +81,16 @@ void initState()
     return isLoading?
       Center(child : CircularProgressIndicator())
     :Scaffold(
-      appBar: AppBar(title: Text("Hi "+FirebaseAuth.instance.currentUser.displayName),actions: <Widget>[
+      drawer: NavigationDrawerWidget(),
+      appBar: AppBar(title: Text(FirebaseAuth.instance.currentUser.displayName),actions: <Widget>[
         IconButton(icon: Icon(Icons.search), onPressed: (){
          
           Navigator.push(context, MaterialPageRoute(builder:(context)=>Search1() ));
           // Navigator.pop(context);
         },tooltip: "search",),
         IconButton(icon: Icon(Icons.edit), onPressed: (){
-          
-        print(currentId);
+       // print("url"+FirebaseAuth.instance.currentUser.photoURL.toString());
+        //print(currentId);
         Navigator.push(context,MaterialPageRoute(builder: (context)=>Edit(currentId)));
         }),
         IconButton(icon: Icon(Icons.logout), onPressed:() 
@@ -143,7 +101,7 @@ void initState()
         },
         tooltip:"Logout",
         ),
-        photo!=null?Image.network(photo,height: 30,width: 30,):Icons.person
+        Container(child:photo.toString()!=null?Icon(Icons.person_outline_sharp):Image.network(photo.toString(),height: 30,width: 30,))
       ],
       ),
       body:Column(
