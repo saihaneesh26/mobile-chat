@@ -1,15 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wpg/chat.dart';
-import 'msg.dart';
 import'login.dart';
 import 'search.dart';
 import 'edit.dart';
 import 'sidebar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:move_to_background/move_to_background.dart';
 var currentId;
 void main()
 {
@@ -21,10 +22,15 @@ class A1 extends StatelessWidget{
  FirebaseAuth auth =  FirebaseAuth.instance;
   Widget build(BuildContext c)
   {
-    return MaterialApp(
+    return WillPopScope(onWillPop: ()async{
+
+      MoveToBackground.moveTaskToBack();
+    },
+    child: MaterialApp(
       title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home: auth.currentUser==null?Login():A2(),
+    )
     );
   }
 }
@@ -37,9 +43,7 @@ class A2state extends State<A2>
 {
   String name;
   bool isLoading = false;
-  TextEditingController c1 = new TextEditingController();
-  TextEditingController c2 = new TextEditingController();
-  final _formKey = new GlobalKey<FormState>();
+
   var photo;
  var currentName;
  var currentId;
@@ -50,13 +54,19 @@ void initState()
     FirebaseAuth auth =  FirebaseAuth.instance;
     User user = auth.currentUser; 
      try{
-   photo =FirebaseAuth.instance.currentUser.photoURL;
+   if(FirebaseAuth.instance.currentUser.photoURL==null)
+   {
+     photo = Icon(Icons.person);
+   }
+   else
+   {
+     photo = Image.network(FirebaseAuth.instance.currentUser.photoURL,width: 30,height: 30,);
+   }
+   print("pj"+photo.toString());
    currentId=FirebaseAuth.instance.currentUser.uid;
    currentName  = user.displayName;
   }on NoSuchMethodError catch(e)
   {
-    photo ="";
-    print("d"+photo.toString()=="");
     currentName=null;
     currentId=null;
   }
@@ -94,13 +104,10 @@ void initState()
       drawer: NavigationDrawerWidget(),
       appBar: AppBar(title: Text(currentName),actions: <Widget>[
         IconButton(icon: Icon(Icons.search), onPressed: (){
-         
-          Navigator.push(context, MaterialPageRoute(builder:(context)=>Search1() ));
+         Navigator.push(context, MaterialPageRoute(builder:(context)=>Search1() ));
           // Navigator.pop(context);
         },tooltip: "search",),
         IconButton(icon: Icon(Icons.edit), onPressed: (){
-       // print("url"+FirebaseAuth.instance.currentUser.photoURL.toString());
-        //print(currentId);
         Navigator.push(context,MaterialPageRoute(builder: (context)=>Edit(currentId)));
         }),
         IconButton(icon: Icon(Icons.logout), onPressed:() 
@@ -108,14 +115,16 @@ void initState()
           FirebaseAuth.instance.signOut();
           GoogleSignIn().disconnect();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Logged Out successfully")));
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyApp()));
         },
         tooltip:"Logout",
         ),
-        Container(child:photo.toString() == null ?Icon(Icons.person_outline_sharp):Image.network(photo.toString(),height: 30,width: 30,))
+       Container(child:photo)
       ],
       ),
-      body:Column(
+      body:DoubleBackToCloseApp(snackBar: const SnackBar(
+            content: Text('Tap back again to leave')),
+      child: Column(
       children: <Widget>[
         Container(
           width: double.infinity,
@@ -150,6 +159,7 @@ void initState()
         )
       ],
       ),
+    )
     );
   }
 }

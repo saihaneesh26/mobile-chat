@@ -3,6 +3,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:wpg/search.dart';
 import "app.dart";
+import 'delete.dart';
 import 'search.dart';
 import 'edit.dart';
 import 'login.dart';
@@ -15,15 +16,14 @@ class NavigationDrawerWidget extends StatelessWidget{
   final padding =EdgeInsets.symmetric(horizontal: 20);
   final user = FirebaseAuth.instance.currentUser;
   List <String> items =[
-    "Search","Edit Profile"
+    "Search","Edit Profile","Delete account"
   ];
   List <Icon> ic =[
-    Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],)
+    Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
   ];
   List routes = [
-    Search1(),Edit(user.uid)
+    Search1(),Edit(user.uid),Delete()
       ];
-    
         return Container(
         child: Drawer(
           child: Container(
@@ -76,10 +76,18 @@ class NavigationDrawerWidget extends StatelessWidget{
 
 Widget buildHeader()
 {
+  var photo;
+    if(FirebaseAuth.instance.currentUser.photoURL==null)
+   {
+     photo = Icon(Icons.person,size: 70,);
+   }
+   else
+   {
+     photo = Image.network(FirebaseAuth.instance.currentUser.photoURL,width: 30,height: 30,);
+   }
   final user = FirebaseAuth.instance.currentUser;
-  var image = user.photoURL;
   return Row(children: [
-    Container(child:image.toString()==null?Icon(Icons.person_outline_sharp):Image.network(image.toString(),height: 70,width: 70,)),
+    Container(child:photo),
     SizedBox(height: 10,),
     Container(
       child:Text(user.displayName.toString(),style: TextStyle(fontSize: 24),),

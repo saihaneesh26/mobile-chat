@@ -214,7 +214,7 @@ signUp() async
                 text: "Sign Up with Google",
                 onPressed: ()
                 {
-                  authMethods.signUpWithGoogle();
+                  authMethods.signInWithGoogle();
                   Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => Login()),

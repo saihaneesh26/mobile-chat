@@ -1,9 +1,11 @@
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:move_to_background/move_to_background.dart';
 import 'signup.dart';
 import 'app.dart';
 import 'auth.dart';
@@ -151,7 +153,9 @@ signIn()  async
     return Scaffold(
     appBar: AppBar(title: Text('Login'),
     ),
-    body:
+    body:DoubleBackToCloseApp(snackBar: SnackBar(content: Text("press again to exit"),
+    ),
+    child: 
     isLoading?
     Center(
       child: CircularProgressIndicator(),
@@ -222,6 +226,7 @@ signIn()  async
         ),
       ),
     ),
+    )
     );
   }
 }
