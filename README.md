@@ -17,3 +17,4 @@ v1.0.4 26-04-21
  -- build 2 27-04-21
  minor updates in signin with google
  sidebar improved
+ search optimized and improved the view
