@@ -61,7 +61,7 @@ class NavigationDrawerWidget extends StatelessWidget{
                 width: double.infinity,
                 decoration: BoxDecoration(border: Border.all(color: Colors.black)),
                 child:Center(
-                  child:Text("CTZ -- V1.0.4",style: TextStyle(fontSize: 20),)
+                  child:Text("CTZ -- V1.0.5",style: TextStyle(fontSize: 20),)
                 )
               )
             ],) ,

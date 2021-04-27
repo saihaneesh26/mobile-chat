@@ -1,8 +1,13 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:wpg/view.dart';
 import 'msg.dart';
+import 'upload.dart';
 
 class chat extends StatelessWidget{
   final name;String oppId;final currentId;
@@ -49,6 +54,25 @@ Widget msgview({Map msg})
   //   final currentuser = user.displayName; 
   if(msg["toId"]==currentId && msg["fromId"]==oppId) //recieved to me
   {
+  
+    if(msg["ImagePath"]!=null)
+    { return 
+    GestureDetector(
+      child: Container(
+    padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+    margin: EdgeInsets.all(3),
+    decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
+    child:Image.network(msg["ImagePath"],width: 100,height:100,),
+     )
+     ,onDoubleTap: ()
+     {
+       Navigator.push(context,MaterialPageRoute(builder: (builder)=>View(msg["ImagePath"],msg["msg"])));
+     },
+    );
+   
+    }
+
+else
    return Container(
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
@@ -59,6 +83,24 @@ Widget msgview({Map msg})
   }
   else if(msg["toId"]==oppId && msg["fromId"]==currentId)
   {
+     if(msg["ImagePath"]!=null)
+    { return 
+    GestureDetector(
+      child: Container(
+    padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+    margin: EdgeInsets.all(3),
+    decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
+    child:Image.network(msg["ImagePath"],width: 100,height:100,),
+     )
+     ,onDoubleTap: ()
+     {
+       Navigator.push(context,MaterialPageRoute(builder: (builder)=>View(msg["ImagePath"],msg["msg"])));
+     },
+    );
+   
+    }
+
+    else
    return Container(
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
@@ -68,30 +110,43 @@ Widget msgview({Map msg})
   }
   else
   {
-    print("Ds");
     return(Text(""));
   }
 }
-
+List<String> _locations = ['A', 'B', 'C', 'D'];
+var _selectedLocation = "A";
+    String dropdownValue = 'One';
    @override
   Widget build(BuildContext context) {
     TextEditingController c1 = new TextEditingController();
   return isLoading?
   Center(child: CircularProgressIndicator(),)
   :Scaffold(
-    appBar: AppBar(actions: [
-      IconButton(icon:Icon(Icons.refresh_outlined),onPressed: (){
-        // setState(() {
-        //   isLoading=true;
-        // });
-        //initState();
+    appBar: AppBar(actions: [    
+      IconButton(icon: Icon(Icons.add_photo_alternate),onPressed: () async{
+        setState(() {
+          isLoading=true;
+        });
+        await new Upload().getimage(context,"Gallery",oppId);
+        setState(() {
+          isLoading=false;
+        });
       },),
-    ],title:Text("$name") ,),
+     IconButton(icon: Icon(Icons.add_a_photo),onPressed: () async{
+       setState(() {
+          isLoading=true;
+        });
+         await new Upload().getimage(context,"Camera",oppId);
+         setState(() {
+          isLoading=false;
+        });
+      },),
+      ],title:Text("$name") ,),
     body:Column(children: [
       Container(
         child:Expanded(
           child: FirebaseAnimatedList(query: _dbref, itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index){
-              print(snapshot.value);
+            //  print(snapshot.value);
               if(snapshot.value==null)
               return Container(child:Text("Say Hi to "+name));
               else{
@@ -128,3 +183,33 @@ Widget msgview({Map msg})
     );
   }
 }
+
+/*
+DropdownButton<String>(
+      icon: const Icon(Icons.upload_rounded),
+      iconEnabledColor: Colors.black,
+      iconSize: 24,
+      elevation: 16,
+      onChanged: (String newValue) {
+        
+      },
+      items: <String>['Gallery', 'Camera']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          child:GestureDetector(child: Text(value),onTap: ()async{
+            print(value);
+            setState(() {
+          isLoading = true;
+        });
+        
+          new Upload().getimage(context);
+        
+        setState(() {
+          isLoading = false;
+        });
+          },) 
+        );
+      }).toList(),
+    )
+     
+*/

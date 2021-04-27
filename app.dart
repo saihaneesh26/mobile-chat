@@ -62,7 +62,6 @@ void initState()
    {
      photo = Image.network(FirebaseAuth.instance.currentUser.photoURL,width: 30,height: 30,);
    }
-   print("pj"+photo.toString());
    currentId=FirebaseAuth.instance.currentUser.uid;
    currentName  = user.displayName;
   }on NoSuchMethodError catch(e)
