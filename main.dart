@@ -25,22 +25,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.orange[400],
       ),
-      home:FutureBuilder(future: _fbapp,
-          builder: (context,snapshot){
-            if(snapshot.hasError)
-            {
-              return Text("some thing is wrong");
-            }
-            else if(snapshot.hasData)
-            {
-              return Login();
-            }
-            else{
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-          },),
+      home:Login()
     );
   }
 }
@@ -178,7 +163,9 @@ signUp() async
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Signup")),
+      appBar: AppBar(actions: [
+        Text("SignUp"),
+      ],),
       body:isLoading?
     Container(
       child:Center(child: CircularProgressIndicator(),)

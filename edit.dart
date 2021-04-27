@@ -53,13 +53,14 @@ Widget build(BuildContext context)
         AuthMethods a = new AuthMethods();
         if(c1.text!="") 
         {
-          setState(() {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("Editing..")));
+          setState(() {    
             isLoading=true;
           });
-          var er =a.update(c1.text, c2.text,c3.text);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("Updated Profile")));
+          var er = await a.update(c1.text, c2.text,c3.text);
           Navigator.pop(context);
           setState(() {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("Updated Profile")));
             isLoading=false;
           });
         }
@@ -78,12 +79,7 @@ Widget build(BuildContext context)
           decoration: InputDecoration(border: OutlineInputBorder(gapPadding: 2),hintText: "Username",labelText: "Username"),
         ),
         SizedBox(height:10),
-        TextFormField(
-          controller:c2,
-          scrollPadding: EdgeInsets.all(10),
-          decoration: InputDecoration(border: OutlineInputBorder(gapPadding: 2),hintText: "password",labelText: "Fill to change password"),
-        ),
-        SizedBox(height:10),  
+      
         TextFormField(
           controller:c3,
           decoration: InputDecoration(border: OutlineInputBorder(gapPadding: 2),hintText: "DP URL",labelText: "Dp URL"),

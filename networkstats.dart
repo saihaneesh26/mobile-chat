@@ -1,9 +1,9 @@
 import 'package:connectivity/connectivity.dart';
 
 
- network_stats() async {
+ network_stats()  {
 
-  var connectivityResult = await (Connectivity().checkConnectivity());
+  var connectivityResult =  (Connectivity().checkConnectivity());
   if (connectivityResult == ConnectivityResult.mobile) {
     print("mobike");
     return true;

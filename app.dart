@@ -74,10 +74,9 @@ void initState()
          Container(
            padding: EdgeInsets.all(2),
            margin:EdgeInsets.symmetric(horizontal: 3,vertical: 1),
-           alignment: Alignment.topCenter,
            child:Icon(Icons.message),
            ),
-         Text(l["name"]+(l["me"]?" (me)":""),style: TextStyle(fontSize: 24),),
+         Center(child:Text(l["name"]+(l["me"]?" (me)":""),style: TextStyle(fontSize: 24),),)
       ]
     ) 
     ),onTap: (){
