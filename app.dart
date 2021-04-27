@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wpg/chat.dart';
 import 'msg.dart';
 import'login.dart';
@@ -17,13 +18,13 @@ void main()
 }
 
 class A1 extends StatelessWidget{
-
+ FirebaseAuth auth =  FirebaseAuth.instance;
   Widget build(BuildContext c)
   {
     return MaterialApp(
       title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
-      home: A2(),
+      home: auth.currentUser==null?Login():A2(),
     );
   }
 }
@@ -39,16 +40,26 @@ class A2state extends State<A2>
   TextEditingController c1 = new TextEditingController();
   TextEditingController c2 = new TextEditingController();
   final _formKey = new GlobalKey<FormState>();
-  var photo =FirebaseAuth.instance.currentUser.photoURL;
+  var photo;
  var currentName;
- var currentId=FirebaseAuth.instance.currentUser.uid;
+ var currentId;
 void initState()
 {
    isLoading=false;
    
     FirebaseAuth auth =  FirebaseAuth.instance;
-    User user = auth.currentUser;
+    User user = auth.currentUser; 
+     try{
+   photo =FirebaseAuth.instance.currentUser.photoURL;
+   currentId=FirebaseAuth.instance.currentUser.uid;
    currentName  = user.displayName;
+  }on NoSuchMethodError catch(e)
+  {
+    photo ="";
+    print("d"+photo.toString()=="");
+    currentName=null;
+    currentId=null;
+  }
    super.initState();
   }
   Widget listview({Map l})
@@ -82,7 +93,7 @@ void initState()
       Center(child : CircularProgressIndicator())
     :Scaffold(
       drawer: NavigationDrawerWidget(),
-      appBar: AppBar(title: Text(FirebaseAuth.instance.currentUser.displayName),actions: <Widget>[
+      appBar: AppBar(title: Text(currentName),actions: <Widget>[
         IconButton(icon: Icon(Icons.search), onPressed: (){
          
           Navigator.push(context, MaterialPageRoute(builder:(context)=>Search1() ));
@@ -96,12 +107,13 @@ void initState()
         IconButton(icon: Icon(Icons.logout), onPressed:() 
         {
           FirebaseAuth.instance.signOut();
+          GoogleSignIn().disconnect();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Logged Out successfully")));
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>Login()));
         },
         tooltip:"Logout",
         ),
-        Container(child:photo.toString()!=null?Icon(Icons.person_outline_sharp):Image.network(photo.toString(),height: 30,width: 30,))
+        Container(child:photo.toString() == null ?Icon(Icons.person_outline_sharp):Image.network(photo.toString(),height: 30,width: 30,))
       ],
       ),
       body:Column(

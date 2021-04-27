@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -37,7 +38,6 @@ class Login extends StatefulWidget{
   }
 
 class LoginState extends State<Login>{
-
   final db = FirebaseDatabase.instance;
   String username,password;
   TextEditingController c1 = new TextEditingController();
@@ -187,7 +187,16 @@ signIn()  async
                       setState(() {
                     isLoading=true;
                   });
+                  try{
                   await authMethods.signInWithGoogle();
+                  }on PlatformException catch(e)
+                  {
+                     setState(() {
+                    isLoading=false;
+                  });
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>Login()));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Try again"),));                  
+                  }
                     setState(() {
                     isLoading=false;
                   });
