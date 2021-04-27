@@ -52,12 +52,13 @@ void initState()
     }
     else{
       var db;
-     db = await FirebaseDatabase.instance.reference().child("users").endAt(c1.text).once().then((DataSnapshot snap) async {
+     db = await FirebaseDatabase.instance.reference().child("users").orderByChild("name").startAt(c1.text).limitToFirst(10).once().then((DataSnapshot snap) async {
     setState(() {
       searchList.clear();
     });
     var keys = snap.value.keys;
       var values = snap.value;
+      print(values);
       if(snap.value==null)
       {
         
@@ -70,6 +71,7 @@ void initState()
         //print(values[key]['email']);
         searchList.add(u);
       }
+      searchList.sort((a,b)=>a.name.compareTo(b.name));
       }
      ).catchError((e){
        print(e.toString());
@@ -91,17 +93,17 @@ else
                 shrinkWrap: true,
                 itemCount:searchList.length,
                 itemBuilder: (context,index){
-                  return Row(
-                    // padding: EdgeInsets.all(20),
+                  return Container(
+                     padding: EdgeInsets.all(2),
                     // decoration: BoxDecoration(borderRadius:new BorderRadius.circular(10),color: Colors.green),
-                    children :<Widget>[
+                    child :
                       GestureDetector(
                         child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 16,vertical: 14),
                         decoration: BoxDecoration(border: new Border.all(width:2,)),
-                        child:Center(child:Row(children:<Widget>[
-                          Text(searchList[index].name+" : "),
-                          Text(searchList[index].email+" "),
+                        child:(Row(children:<Widget>[
+                          Text(searchList[index].name,style: TextStyle(fontSize: 20),),
+                          Spacer(),
                           ElevatedButton(onPressed: () async{
                               Query _dbref;
   List doc =[];
@@ -113,6 +115,7 @@ else
    final db = await FirebaseDatabase.instance.reference().child("users").once().then((DataSnapshot snap)  async {
     var keys = snap.value.keys;
       var values = snap.value;
+      print(values);
       if(snap.value==null)
       {
         return "";
@@ -149,7 +152,7 @@ else
                           Navigator.push((context),MaterialPageRoute(builder: (context)=>A1()));
                         },
                       ),
-                      ]);
+                      );
                 });
 }
 
@@ -186,6 +189,7 @@ SingleChildScrollView(
             },
 
            ),
+           SizedBox(height: 5,),
             list(),
           ],
         ),
