@@ -1,14 +1,9 @@
-import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:wpg/view.dart';
 import 'msg.dart';
 import 'upload.dart';
-import 'package:file_picker/file_picker.dart';
 
 class chat extends StatelessWidget{
   final name;String oppId;final currentId;
@@ -55,22 +50,25 @@ Widget msgview({Map msg})
   //   final currentuser = user.displayName; 
   if(msg["toId"]==currentId && msg["fromId"]==oppId) //recieved to me
   {
-  
     if(msg["ImagePath"]!=null)
-    { return 
+    { print(msg["ImagePath"]);
+    return 
     GestureDetector(
       child: Container(
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
-    child:Image.network(msg["ImagePath"],width: 100,height:100,),
+    child:
+    Image.network(msg["ImagePath"],width: 100,height:100,errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+        return Text('Your error widget...');}),
+
+
      )
      ,onDoubleTap: ()
      {
        Navigator.push(context,MaterialPageRoute(builder: (builder)=>View(msg["ImagePath"],msg["msg"])));
      },
     );
-   
     }
 
 else
@@ -78,10 +76,14 @@ else
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
-    child:Text(msg["msg"].toString(),style: TextStyle(fontSize: 27,color: Colors.black),)
+    child:Expanded(
+      child:Text(msg["msg"].toString(),maxLines: 10,style: TextStyle(fontSize: 27,color: Colors.black),overflow: TextOverflow.ellipsis,))
      )
    ;
   }
+
+
+
   else if(msg["toId"]==oppId && msg["fromId"]==currentId)
   {
      if(msg["ImagePath"]!=null)
@@ -91,7 +93,8 @@ else
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
-    child:Image.network(msg["ImagePath"],width: 100,height:100,),
+    child:Image.network(msg["ImagePath"],width: 100,height:100,errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
+        return Text('Your error widget...');}),
      )
      ,onDoubleTap: ()
      {
@@ -106,8 +109,9 @@ else
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.black),
-    child:Text(msg["msg"].toString(),style: TextStyle(fontSize: 27,color: Colors.white),)
-    );
+    child:Expanded(
+      child:Text(msg["msg"].toString(),maxLines: 10,style: TextStyle(fontSize: 27,color: Colors.white),overflow: TextOverflow.ellipsis,))
+     );
   }
   else
   {

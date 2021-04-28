@@ -1,28 +1,30 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info/package_info.dart';
 import 'package:wpg/search.dart';
 import "app.dart";
 import 'delete.dart';
 import 'search.dart';
 import 'edit.dart';
 import 'login.dart';
-
-
+import 'report.dart';
 
 
 class NavigationDrawerWidget extends StatelessWidget{
+final info="";
   Widget build(BuildContext context) {
   final padding =EdgeInsets.symmetric(horizontal: 20);
   final user = FirebaseAuth.instance.currentUser;
+
   List <String> items =[
-    "Search","Edit Profile","Delete account"
+    "Search","Edit Profile","Report a Bug","Delete account"
   ];
   List <Icon> ic =[
-    Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
+    Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.report_problem_rounded,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
   ];
   List routes = [
-    Search1(),Edit(user.uid),Delete()
+    Search1(),Edit(user.uid),NewReport(),Delete()
       ];
         return Container(
         child: Drawer(
@@ -61,7 +63,14 @@ class NavigationDrawerWidget extends StatelessWidget{
                 width: double.infinity,
                 decoration: BoxDecoration(border: Border.all(color: Colors.black)),
                 child:Center(
-                  child:Text("CTZ -- V1.0.5",style: TextStyle(fontSize: 20),)
+                  child:GestureDetector(
+                  child:Text("CTZ Version ",style: TextStyle(fontSize: 20),),onTap: () async{
+
+                  PackageInfo packageInfo = await PackageInfo.fromPlatform();          
+                                await ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(packageInfo.version),));
+  
+                  },
+                  )
                 )
               )
             ],) ,
@@ -83,7 +92,7 @@ Widget buildHeader()
    }
    else
    {
-     photo = Image.network(FirebaseAuth.instance.currentUser.photoURL,width: 30,height: 30,);
+     photo = Image.network(FirebaseAuth.instance.currentUser.photoURL,width: 100,height: 100,);
    }
   final user = FirebaseAuth.instance.currentUser;
   return Row(children: [
