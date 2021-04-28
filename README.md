@@ -23,3 +23,10 @@ V1.0.5  27-04-2021
 ->upload image and view and download
 ->delete account
 ->background run and double tap to exit
+
+V1.0.6 28-04-2021
+->report a bug feature
+->overflow issues handeled
+
+V1.0.7 expectations
+->notifications
