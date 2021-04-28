@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:wpg/view.dart';
 import 'msg.dart';
 import 'upload.dart';
+import 'package:file_picker/file_picker.dart';
 
 class chat extends StatelessWidget{
   final name;String oppId;final currentId;
@@ -113,35 +114,88 @@ else
     return(Text(""));
   }
 }
-List<String> _locations = ['A', 'B', 'C', 'D'];
-var _selectedLocation = "A";
-    String dropdownValue = 'One';
+
    @override
-  Widget build(BuildContext context) {
+Widget build(BuildContext context) {
+        List _dropvalues = [
+        GestureDetector(child:Container(child: Row(children: [
+          Icon(Icons.add_photo_alternate),
+          Text("Gallery",),
+        ],
+        ),
+        ),onTap: ()async {
+          setState(() {
+                  isLoading=true;
+                });
+                await new Upload().getimage(context,"Gallery",oppId);
+                setState(() {
+                  isLoading=false;
+                });
+        },),
+        GestureDetector(child:Container(child: Row(children: [
+          Icon(Icons.add_a_photo),
+          Text("Camera",),
+        ],
+        ),
+        ),onTap: () async{
+        setState(() {
+                  isLoading=true;
+                });
+                await new Upload().getimage(context,"Camera",oppId);
+                setState(() {
+                  isLoading=false;
+                });
+        },
+        ),
+        GestureDetector(child:Container(child: Row(children: [
+          Icon(Icons.video_library),
+          Text("Vedio",),
+        ],
+        ),
+        ),onTap: () async{
+        setState(() {
+                  isLoading=true;
+                });
+                await new Upload().getimage(context,"Vedio",oppId);
+                setState(() {
+                  isLoading=false;
+                });
+        },
+        ),
+        GestureDetector(child:Container(child: Row(children: [
+          Icon(Icons.upload_file),
+          Text("File",),
+        ],
+        ),
+        ),onTap: () async{
+        setState(() {
+                  isLoading=true;
+                });
+                await new Upload().getFile(context,"file",oppId);
+                setState(() {
+                  isLoading=false;
+                });
+        },
+        ),
+
+
+        ];
     TextEditingController c1 = new TextEditingController();
   return isLoading?
   Center(child: CircularProgressIndicator(),)
   :Scaffold(
     appBar: AppBar(actions: [    
-      IconButton(icon: Icon(Icons.add_photo_alternate),onPressed: () async{
-        setState(() {
-          isLoading=true;
-        });
-        await new Upload().getimage(context,"Gallery",oppId);
-        setState(() {
-          isLoading=false;
-        });
-      },),
-     IconButton(icon: Icon(Icons.add_a_photo),onPressed: () async{
-       setState(() {
-          isLoading=true;
-        });
-         await new Upload().getimage(context,"Camera",oppId);
-         setState(() {
-          isLoading=false;
-        });
-      },),
-      ],title:Text("$name") ,),
+
+    PopupMenuButton<String>(
+            itemBuilder: (BuildContext context) {
+              return _dropvalues.map((choice) {
+                return PopupMenuItem<String>(
+                  child: Container(child: choice,)
+                  );
+              }).toList();
+            },
+          ),
+        ],title:Text("$name") ,),
     body:Column(children: [
       Container(
         child:Expanded(

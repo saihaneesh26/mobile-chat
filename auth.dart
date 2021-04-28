@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -20,25 +23,37 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
         }
       }
 
-      Future update(String name,password,url)async
+      Future update(String name,filename,filepath)async
       {
         final currentId = FirebaseAuth.instance.currentUser.uid;
-        if(url=="")
+        if(filename=="")
         {
-          url = FirebaseAuth.instance.currentUser.photoURL;
+          await FirebaseDatabase.instance.reference().child("users").child(currentId).update({
+            "name":name,
+            "dp":FirebaseAuth.instance.currentUser.photoURL,
+          });   
+          await  FirebaseAuth.instance.currentUser.updateProfile(displayName: name,photoURL: FirebaseAuth.instance.currentUser.photoURL); 
+          return; 
         }
         try{
-          await _auth.currentUser.updateProfile(displayName: name,photoURL:url);
-          print("updated"+FirebaseAuth.instance.currentUser.displayName); 
+            var _image = File(filepath);
+            var uploadTask = FirebaseStorage.instance.ref().child(currentId+"__dp__").putFile(_image);
+            await uploadTask.whenComplete((){
+              print("uploaded");
+            });
+            var ref = FirebaseStorage.instance.ref().child(currentId+"__dp__");
+            var path = await ref.getDownloadURL();
+            print("path "+path);
            await FirebaseDatabase.instance.reference().child("users").child(currentId).update({
             "name":name,
-            "email":FirebaseAuth.instance.currentUser.email
-          });     
-          return "updated";  
+            "email":FirebaseAuth.instance.currentUser.email,
+            "dp":path
+          });   
+          await  FirebaseAuth.instance.currentUser.updateProfile(displayName: name,photoURL: path);   
         }on FirebaseAuthException catch(e)
         {
           print(e);
-          return e;
+          return ;
         }
       }
 

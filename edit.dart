@@ -1,6 +1,9 @@
+import 'dart:io';
+import 'package:path/path.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'auth.dart';
 
 class edit extends StatelessWidget{
@@ -45,6 +48,11 @@ void initState()
 
 Widget build(BuildContext context)
 {
+  File _image;
+         var picker = ImagePicker();
+         var image;
+         var _imagepath="";
+var p="";
   return isLoading?
   Center(child:CircularProgressIndicator())
   :Scaffold(
@@ -57,7 +65,9 @@ Widget build(BuildContext context)
           setState(() {    
             isLoading=true;
           });
-          var er = await a.update(c1.text, c2.text,c3.text);
+          print(_imagepath+"sd");
+         var er = await a.update(c1.text,c2.text,c3.text);
+         
           Navigator.pop(context);
           setState(() {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:Text("Updated Profile")));
@@ -79,11 +89,22 @@ Widget build(BuildContext context)
           decoration: InputDecoration(border: OutlineInputBorder(gapPadding: 2),hintText: "Username",labelText: "Username"),
         ),
         SizedBox(height:10),
-      
-        TextFormField(
-          controller:c3,
-          decoration: InputDecoration(border: OutlineInputBorder(gapPadding: 2),hintText: "DP URL",labelText: "Dp URL"),
-        )
+        IconButton(icon: Icon(Icons.upload_file), onPressed: () async
+        {
+           image = await picker.getImage(source: ImageSource.gallery);
+           c3.text = image.path;
+           print("c3"+c3.text);
+          if(image==null)
+          {
+            return;
+          }
+          _imagepath = (basename(image.path));
+          p+=currentId.toString();
+          p+=_imagepath.toString();
+          c2.clear();
+          c2.text=p;
+          print(c2.text);
+        }),
       ],),
     )
   );
