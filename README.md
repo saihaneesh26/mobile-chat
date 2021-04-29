@@ -31,6 +31,8 @@ V1.0.6 28-04-2021
 V1.0.7 expectations
 ->notifications
 
-Latest version 1.0.6.3 is stable ... 29-04-2021
+Latest version 1.0.6.4 is stable ... 29-04-2021
 ->updated download issues
 ->updated the report page
+->updated interface and chat message order
+
