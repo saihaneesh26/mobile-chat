@@ -53,7 +53,11 @@ Widget build(BuildContext context)
          var image;
          var _imagepath="";
 var p="";
-  return isLoading?
+  return WillPopScope(onWillPop: ()async{
+      print("FDs");
+      Navigator.pop(context);
+    },
+    child:isLoading?
   Center(child:CircularProgressIndicator())
   :Scaffold(
     appBar: AppBar(actions: [
@@ -106,7 +110,7 @@ var p="";
           print(c2.text);
         }),
       ],),
-    )
+    ))
   );
 }
 }

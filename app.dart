@@ -23,8 +23,8 @@ class A1 extends StatelessWidget{
   Widget build(BuildContext c)
   {
     return WillPopScope(onWillPop: ()async{
-
-      MoveToBackground.moveTaskToBack();
+      print("back");
+     MoveToBackground.moveTaskToBack();
     },
     child: MaterialApp(
       title: "CTZ",
@@ -71,7 +71,13 @@ void initState()
   }
    super.initState();
   }
-  Widget listview({Map l})
+ 
+
+   @override
+  Widget build(BuildContext context) {
+
+
+ Widget listview({Map l})
   {
     return GestureDetector(
       child:Container(
@@ -95,8 +101,7 @@ void initState()
   }
 
 
-   @override
-  Widget build(BuildContext context) {
+
     return isLoading?
       Center(child : CircularProgressIndicator())
     :Scaffold(

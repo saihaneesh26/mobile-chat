@@ -187,7 +187,9 @@ Widget build(BuildContext context) {
 
         ];
     TextEditingController c1 = new TextEditingController();
-  return isLoading?
+  return  WillPopScope(onWillPop: () async{
+ Navigator.pop(context);
+  },child:isLoading?
   Center(child: CircularProgressIndicator(),)
   :Scaffold(
     appBar: AppBar(actions: [    
@@ -239,7 +241,8 @@ Widget build(BuildContext context) {
           ),
         )
       )
-    ],)      
+    ],)
+  )      
     );
   }
 }

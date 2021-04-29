@@ -95,7 +95,18 @@ Future signInWithGoogle() async {
   // Trigger the authentication flow
   try{
   final googleUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+  // 
+final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth.accessToken,
+    idToken: googleAuth.idToken,
+  ); 
+  // Once signed in, return the UserCredential
+  await FirebaseAuth.instance.signInWithCredential(credential);
+  final person = await FirebaseAuth.instance.currentUser;
   bool old=false;
+  //final ud = await FirebaseDatabase.instance.reference().child("users").equalTo(person.uid);
     final dbq= await FirebaseDatabase.instance.reference().child("users").once().then((snap){
       var keys = snap.value.keys;
       var values = snap.value;
@@ -109,7 +120,7 @@ Future signInWithGoogle() async {
     });
 
   if(old==false){
-  final db= await FirebaseDatabase.instance.reference().child("users").child(FirebaseAuth.instance.currentUser.uid).update({
+  final db= await FirebaseDatabase.instance.reference().child("users").child(person.uid).update({
                     "name":googleUser.displayName,
                     "email":googleUser.email,
                   }).catchError((onError){
@@ -119,15 +130,9 @@ Future signInWithGoogle() async {
 
 
   //Obtain the auth details from the request
-  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
   // Create a new credential
-  final GoogleAuthCredential credential = GoogleAuthProvider.credential(
-    accessToken: googleAuth.accessToken,
-    idToken: googleAuth.idToken,
-  ); 
-  // Once signed in, return the UserCredential
-  return await FirebaseAuth.instance.signInWithCredential(credential);
+  
   }
   on PlatformException catch(e)
   {

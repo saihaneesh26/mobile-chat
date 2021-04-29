@@ -195,6 +195,9 @@ signUp() async
                         isLoading= true;
                       });
                       signUp();
+                      setState(() {
+                        isLoading = false;
+                      });
                     }
                   },
                 ),
@@ -204,11 +207,19 @@ signUp() async
                 text: "Sign Up with Google",
                 onPressed: ()
                 async {
-                 await authMethods.signInWithGoogle();
-                  Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
+                  try{
+                await authMethods.signInWithGoogle();
+                Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => Login()),
                 );
+                  }
+                 catch (e)
+                 {
+                   setState(() {
+                     isLoading= false;
+                   });
+                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("some thing is wrong"+e.toString()),));
+                 }
+                 
                 }),
 
                 ElevatedButton(onPressed: ()
