@@ -30,3 +30,6 @@ V1.0.6 28-04-2021
 
 V1.0.7 expectations
 ->notifications
+
+Latest version 1.0.6.2 Beta is stable ... 29-04-2021
+->updated download issues
