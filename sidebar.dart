@@ -18,13 +18,13 @@ final info="";
   final user = FirebaseAuth.instance.currentUser;
 
   List <String> items =[
-    "Search","Edit Profile","Report a Bug","Delete account"
+    "Chat","Search","Edit Profile","Report a Bug","Delete account"
   ];
   List <Icon> ic =[
-    Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.report_problem_rounded,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
+    Icon(Icons.chat,color:Colors.orange[400]),Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.report_problem_rounded,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
   ];
   List routes = [
-    Search1(),Edit(user.uid),NewReport(),Delete()
+    A1(),Search1(),Edit(user.uid),NewReport(),Delete()
       ];
         return Container(
         child: Drawer(
@@ -98,8 +98,11 @@ Widget buildHeader()
   return Row(children: [
     Container(child:photo),
     SizedBox(height: 10,),
-    Container(
-      child:Text(user.displayName.toString(),style: TextStyle(fontSize: 24),),
+    Expanded(
+      child:Container(
+        padding: EdgeInsets.all(1),
+        width: double.infinity,
+        child: Text(user.displayName.toString(),style: TextStyle(fontSize: 20),maxLines: 2,overflow: TextOverflow.fade,)),
     ),
     Spacer(),
   ],);

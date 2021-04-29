@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:wpg/sidebar.dart';
 import 'auth.dart';
 
 class edit extends StatelessWidget{
@@ -53,13 +54,10 @@ Widget build(BuildContext context)
          var image;
          var _imagepath="";
 var p="";
-  return WillPopScope(onWillPop: ()async{
-      print("FDs");
-      Navigator.pop(context);
-    },
-    child:isLoading?
+  return isLoading?
   Center(child:CircularProgressIndicator())
   :Scaffold(
+    drawer: NavigationDrawerWidget(),
     appBar: AppBar(actions: [
       ElevatedButton(onPressed: () async {
         AuthMethods a = new AuthMethods();
@@ -110,8 +108,9 @@ var p="";
           print(c2.text);
         }),
       ],),
-    ))
-  );
+    )
+    )
+    ;
 }
 }
 

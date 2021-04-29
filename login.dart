@@ -204,9 +204,8 @@ signIn()  async
                     setState(() {
                     isLoading=false;
                   });
-                  
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+FirebaseAuth.instance.currentUser.displayName),));                  
                     Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+FirebaseAuth.instance.currentUser.displayName),));                  
                   }),
 
                 ElevatedButton(onPressed: ()

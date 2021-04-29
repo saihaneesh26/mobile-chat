@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wpg/sidebar.dart';
 
 class Report extends StatelessWidget{
 
@@ -36,6 +37,7 @@ TextEditingController c2 = new TextEditingController();
 TextEditingController c3 = new TextEditingController();
 
   return Scaffold(
+    drawer: NavigationDrawerWidget(),
     appBar: AppBar(title: Text("Report"),),
     body: Container(
       decoration: BoxDecoration(border: Border.all(width: 2)),

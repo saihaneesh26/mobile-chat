@@ -12,11 +12,20 @@ class chat extends StatelessWidget{
   chat(this.name,this.oppId,this.currentId);
   Widget build(BuildContext context)
   {
-    return MaterialApp(
+    var i=3;
+    return WillPopScope(onWillPop: ()async{
+      print("backe");
+     i++;
+     print(i);
+      if(i==5)
+    Navigator.pop(context);
+    //    {MoveToBackground.moveTaskToBack();i=0;}
+    },
+    child: MaterialApp(
       title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home:Mainchat(name,oppId,currentId)
-    );
+     ) );
   }
 }
 class Mainchat extends StatefulWidget{
@@ -41,7 +50,7 @@ void initState()
   setState(() {
     isLoading=false;
   });
-  _dbref = FirebaseDatabase.instance.reference().child("messages").orderByChild("time") ;
+  _dbref = FirebaseDatabase.instance.reference().child("messages");
   super.initState();
 }  
 
@@ -50,16 +59,17 @@ Widget msgview({Map msg})
   // final FirebaseAuth auth =  FirebaseAuth.instance;
   //   User user = auth.currentUser;
   //   final currentuser = user.displayName; 
+  //print("My id"+currentId+"  from id"+oppId);
   if(msg["toId"]==currentId && msg["fromId"]==oppId) //recieved to me
   {
     if(msg["ImagePath"]!=null)
-    { print(msg["ImagePath"]);
+    { //print(msg["ImagePath"]);
     return 
     GestureDetector(
       child: Container(
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
-    decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
+    decoration: BoxDecoration(border: Border.all(color: Colors.black,),color: Colors.white),
     child:Text(msg["msg"])
      )
      ,onDoubleTap: () async
@@ -115,10 +125,10 @@ else
       child:Text(msg["msg"].toString(),maxLines: 10,style: TextStyle(fontSize: 27,color: Colors.white),overflow: TextOverflow.ellipsis,))
      );
   }
-  else
-  {
-    return(Text(""));
+  else{
+    return Container(width:0,height:0);
   }
+ 
 }
 
    @override
@@ -187,9 +197,8 @@ Widget build(BuildContext context) {
 
         ];
     TextEditingController c1 = new TextEditingController();
-  return  WillPopScope(onWillPop: () async{
- Navigator.pop(context);
-  },child:isLoading?
+   
+  return  isLoading?
   Center(child: CircularProgressIndicator(),)
   :Scaffold(
     appBar: AppBar(actions: [    
@@ -208,7 +217,7 @@ Widget build(BuildContext context) {
       Container(
         child:Expanded(
           child: FirebaseAnimatedList(query: _dbref, itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index){
-            //  print(snapshot.value);
+            // print(snapshot.value);
               if(snapshot.value==null)
               return Container(child:Text("Say Hi to "+name));
               else{
@@ -242,37 +251,7 @@ Widget build(BuildContext context) {
         )
       )
     ],)
-  )      
+      
     );
   }
 }
-
-/*
-DropdownButton<String>(
-      icon: const Icon(Icons.upload_rounded),
-      iconEnabledColor: Colors.black,
-      iconSize: 24,
-      elevation: 16,
-      onChanged: (String newValue) {
-        
-      },
-      items: <String>['Gallery', 'Camera']
-          .map<DropdownMenuItem<String>>((String value) {
-        return DropdownMenuItem<String>(
-          child:GestureDetector(child: Text(value),onTap: ()async{
-            print(value);
-            setState(() {
-          isLoading = true;
-        });
-        
-          new Upload().getimage(context);
-        
-        setState(() {
-          isLoading = false;
-        });
-          },) 
-        );
-      }).toList(),
-    )
-     
-*/

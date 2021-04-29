@@ -20,18 +20,24 @@ void main()
 
 class A1 extends StatelessWidget{
  FirebaseAuth auth =  FirebaseAuth.instance;
-  Widget build(BuildContext c)
-  {
+ 
+  Widget build(BuildContext context)
+  {var i=0;
     return WillPopScope(onWillPop: ()async{
       print("back");
-     MoveToBackground.moveTaskToBack();
+     i++;
+     print(i);
+      if(i==2)
+    Navigator.pop(context);
+    //    {MoveToBackground.moveTaskToBack();i=0;}
     },
     child: MaterialApp(
       title: "CTZ",
       theme: ThemeData(primaryColor: Colors.orange[400]),
       home: auth.currentUser==null?Login():A2(),
     )
-    );
+    )
+    ;
   }
 }
 class A2 extends StatefulWidget{
@@ -74,9 +80,9 @@ void initState()
  
 
    @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext cotext) {
 
-
+var i;
  Widget listview({Map l})
   {
     return GestureDetector(
@@ -95,7 +101,7 @@ void initState()
       ]
     ) 
     ),onTap: (){
-       Navigator.push(context,MaterialPageRoute(builder: (context)=>Mainchat(l["name"],l["Id"],currentId)));
+       Navigator.push(context,MaterialPageRoute(maintainState: true,builder: (_)=>Mainchat(l["name"],l["Id"],currentId)));
     },
     );
   }
@@ -164,6 +170,7 @@ void initState()
       ],
       ),
     )
+    
     );
   }
 }
