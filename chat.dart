@@ -1,6 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:wpg/view.dart';
 import 'msg.dart';
 import 'upload.dart';
@@ -58,15 +60,16 @@ Widget msgview({Map msg})
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
-    child:
-    Image.network(msg["ImagePath"],width: 100,height:100,errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-        return Text('Your error widget...');}),
-
-
+    child:Text(msg["msg"])
      )
-     ,onDoubleTap: ()
+     ,onDoubleTap: () async
      {
+       
+              setState(() {
+                isLoading=true;
+              });
        Navigator.push(context,MaterialPageRoute(builder: (builder)=>View(msg["ImagePath"],msg["msg"])));
+       
      },
     );
     }
@@ -76,7 +79,7 @@ else
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
-    child:Expanded(
+    child:Container(
       child:Text(msg["msg"].toString(),maxLines: 10,style: TextStyle(fontSize: 27,color: Colors.black),overflow: TextOverflow.ellipsis,))
      )
    ;
@@ -93,13 +96,12 @@ else
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.white),
-    child:Image.network(msg["ImagePath"],width: 100,height:100,errorBuilder: (BuildContext context, Object exception, StackTrace stackTrace) {
-        return Text('Your error widget...');}),
-     )
-     ,onDoubleTap: ()
+   child:Text(msg["msg"]))
+     ,onDoubleTap: () async
      {
+       
        Navigator.push(context,MaterialPageRoute(builder: (builder)=>View(msg["ImagePath"],msg["msg"])));
-     },
+     }
     );
    
     }
@@ -109,7 +111,7 @@ else
     padding: EdgeInsets.symmetric(horizontal: 5,vertical: 5),
     margin: EdgeInsets.all(3),
     decoration: BoxDecoration(border: Border.all(color: Colors.black),color: Colors.black),
-    child:Expanded(
+    child:Container(
       child:Text(msg["msg"].toString(),maxLines: 10,style: TextStyle(fontSize: 27,color: Colors.white),overflow: TextOverflow.ellipsis,))
      );
   }
@@ -131,7 +133,7 @@ Widget build(BuildContext context) {
           setState(() {
                   isLoading=true;
                 });
-                await new Upload().getimage(context,"Gallery",oppId);
+               // await new Upload().getimage(context,"Gallery",oppId);
                 setState(() {
                   isLoading=false;
                 });

@@ -27,6 +27,7 @@ class _state extends State<NewReport>{
 
 Widget build(BuildContext context)
 {
+  var version;
 
 final GlobalKey<FormState> _formKey =  new GlobalKey<FormState>();
 
@@ -49,12 +50,13 @@ TextEditingController c3 = new TextEditingController();
         ElevatedButton(onPressed: () async
         {
           PackageInfo packageInfo = await PackageInfo.fromPlatform();
-          final version = packageInfo.version;
+           version = packageInfo.version.toString();
           await FirebaseDatabase.instance.reference().child("report").push().set({
             "ReporterId":FirebaseAuth.instance.currentUser.uid,
             "Report":c1.text,
             "Version":version,
-            "status":"Submitted"
+            "status":"Submitted",
+            "Solution":" "
             ,"time":DateTime.now().millisecondsSinceEpoch
           });
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Row(children:[Text("Thanks for reporting "),Icon(Icons.thumb_up,color: Colors.green,)]),));
@@ -76,19 +78,22 @@ TextEditingController c3 = new TextEditingController();
           }
           else{
             Map c = snapshot.value;
-           return Flexible(child:
+            print(c);
+           return 
             Container(
               decoration: BoxDecoration(border: Border.all(width: 2)),
               padding: EdgeInsets.all(3),
               child: Column(children: [
+                Text("In Version "+c["Version"]),
                 Container(
                 width: double.infinity, 
                 margin: EdgeInsets.all(3),
                 padding: EdgeInsets.all(3), 
-                decoration: BoxDecoration(border: Border.all()),child:Text(c["Report"],style: TextStyle(fontSize: 20),maxLines: 2,overflow: TextOverflow.ellipsis,)),
-                c["status"]=="Submitted"?Icon(Icons.report,color:Colors.red):Icon(Icons.verified,color: Colors.green,)
+                decoration: BoxDecoration(border: Border.all()),child:Text(c["Report"],style: TextStyle(fontSize: 20),maxLines: 3,overflow: TextOverflow.ellipsis,)),
+                c["status"]=="Submitted"?Icon(Icons.report,color:Colors.red):Icon(Icons.verified,color: Colors.green,),
+               Text(c["Solution"],style: TextStyle(),maxLines: 2,)
                 ]),
-            ),
+            
             );
           }
          }

@@ -32,6 +32,7 @@ if(result != null) {
   List<PlatformFile> files = result.files;
     files.forEach((element) async{
       p+=basename(element.path);
+      p+="."+element.extension.toString();
 var uploadTask = FirebaseStorage.instance.ref().child(p).putFile(File(element.path));
 await uploadTask.whenComplete((){
   print("uploaded");
@@ -44,7 +45,7 @@ await FirebaseDatabase.instance.reference().child("messages").push().set(
     "fromId":currentId,
     "toId":oppId,
     "time":DateTime.now().millisecondsSinceEpoch,
-    "msg":_imagepath.toString(),
+    "msg":basename(element.path).toString(),
     "ImagePath":path
   }
 );
