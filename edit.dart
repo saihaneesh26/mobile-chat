@@ -91,6 +91,8 @@ var p="";
           decoration: InputDecoration(border: OutlineInputBorder(gapPadding: 2),hintText: "Username",labelText: "Username"),
         ),
         SizedBox(height:10),
+        Text("Upload DP"),
+        SizedBox(height:5),
         IconButton(icon: Icon(Icons.upload_file), onPressed: () async
         {
            image = await picker.getImage(source: ImageSource.gallery);

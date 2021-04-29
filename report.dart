@@ -1,10 +1,11 @@
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:package_info/package_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wpg/app.dart';
 import 'package:wpg/sidebar.dart';
 
 class Report extends StatelessWidget{
@@ -18,6 +19,14 @@ class Report extends StatelessWidget{
   }
 
 }
+List like = ["false"];
+var currentId;
+Future <void> main()async
+{
+
+currentId = await FirebaseAuth.instance.currentUser.uid.toString();
+
+}
 
 class NewReport extends StatefulWidget{
   _state createState()=>_state();
@@ -26,17 +35,19 @@ class NewReport extends StatefulWidget{
 
 class _state extends State<NewReport>{
 
+
 Widget build(BuildContext context)
 {
   var version;
-
+  bool isLoading=false;
 final GlobalKey<FormState> _formKey =  new GlobalKey<FormState>();
-
+var isLiked = false;
 TextEditingController c1 = new TextEditingController();
 TextEditingController c2 = new TextEditingController();
 TextEditingController c3 = new TextEditingController();
-
-  return Scaffold(
+  return isLoading!=false?
+Center(child: CircularProgressIndicator(),)
+  :Scaffold(
     drawer: NavigationDrawerWidget(),
     appBar: AppBar(title: Text("Report"),),
     body: Container(
@@ -72,21 +83,47 @@ TextEditingController c3 = new TextEditingController();
           // width: double.infinity,
           // decoration: BoxDecoration(color: Colors.red),
           child:Expanded(
-          child: FirebaseAnimatedList(query: FirebaseDatabase.instance.reference().child("report").orderByChild("time"), itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index){
-            
+          child: FirebaseAnimatedList(query: FirebaseDatabase.instance.reference().child("report"), itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index)  {
+          int likes = snapshot.value["LIKES"]==null?0:snapshot.value["LIKES"];
+          if(snapshot.value[FirebaseAuth.instance.currentUser.uid.toString()]!=null){
+            isLiked = true;
+          }
+
           if(snapshot.value==null)
           {
             return Text("no reports");
           }
           else{
             Map c = snapshot.value;
-            print(c);
+           //print(c);
            return 
             Container(
               decoration: BoxDecoration(border: Border.all(width: 2)),
               padding: EdgeInsets.all(3),
               child: Column(children: [
-                Text("In Version "+c["Version"]),
+                Row(children:[Text("In Version "+c["Version"]),Spacer(),IconButton(icon:Icon(Icons.thumb_up_alt_outlined),onPressed: ()async{
+                  setState(()  {
+                    isLoading = true;
+                  });
+                    if(isLiked==false)  {
+                      //like.removeLast();
+                    await   FirebaseDatabase.instance.reference().child("report").child(snapshot.key).update({
+                     "LIKES":likes+1
+                   });
+                   await FirebaseDatabase.instance.reference().child("report").child(snapshot.key).update({FirebaseAuth.instance.currentUser.uid.toString():"true"});
+                    } 
+                   else if(isLiked==true) {
+                      //like.removeLast();
+                    await   FirebaseDatabase.instance.reference().child("report").child(snapshot.key).update({
+                     "LIKES":likes-1
+                   });
+                   await FirebaseDatabase.instance.reference().child("report").child(snapshot.key).child(FirebaseAuth.instance.currentUser.uid.toString()).remove();
+                    }
+                     setState((){
+                       isLoading = false;
+                  });
+                },), Text(likes.toString()+ "Likes"),]
+                ),
                 Container(
                 width: double.infinity, 
                 margin: EdgeInsets.all(3),
