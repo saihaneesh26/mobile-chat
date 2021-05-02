@@ -4,10 +4,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:wpg/auth.dart';
 import 'package:wpg/chat.dart';
 import'login.dart';
 import 'search.dart';
 import 'edit.dart';
+import 'newsearch.dart';
 import 'sidebar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:move_to_background/move_to_background.dart';
@@ -69,6 +71,7 @@ void initState()
      photo = Image.network(FirebaseAuth.instance.currentUser.photoURL,width: 30,height: 30,);
    }
    currentId=FirebaseAuth.instance.currentUser.uid;
+   print("curid"+currentId);
    currentName  = user.displayName;
   }on NoSuchMethodError catch(e)
   {
@@ -82,10 +85,9 @@ void initState()
    @override
   Widget build(BuildContext cotext) {
 
-var i;
- Widget listview({Map l})
-  {
-    return GestureDetector(
+  listview(Map l)
+{
+  return l["me"]?Container(width:0,height:0):GestureDetector(
       child:Container(
       padding: EdgeInsets.all(2),
       margin: EdgeInsets.symmetric(horizontal: 4,vertical: 6),
@@ -97,7 +99,7 @@ var i;
            margin:EdgeInsets.symmetric(horizontal: 3,vertical: 1),
            child:Icon(Icons.message),
            ),
-         Center(child:Text(l["name"]+(l["me"]?" (me)":""),style: TextStyle(fontSize: 24),),)
+         Center(child:Text(l["name"],style: TextStyle(fontSize: 24),),)
       ]
     ) 
     ),onTap: (){
@@ -114,16 +116,16 @@ var i;
       drawer: NavigationDrawerWidget(),
       appBar: AppBar(title: Text(currentName),actions: <Widget>[
         IconButton(icon: Icon(Icons.search), onPressed: (){
-         Navigator.push(context, MaterialPageRoute(builder:(context)=>Search1() ));
+         Navigator.push(context, MaterialPageRoute(builder:(context)=>NewSearch1() ));
           // Navigator.pop(context);
         },tooltip: "search",),
         IconButton(icon: Icon(Icons.edit), onPressed: (){
         Navigator.push(context,MaterialPageRoute(builder: (context)=>Edit(currentId)));
         }),
-        IconButton(icon: Icon(Icons.logout), onPressed:() 
+        IconButton(icon: Icon(Icons.logout), onPressed:()async 
         {
-          FirebaseAuth.instance.signOut();
-          GoogleSignIn().disconnect();
+        
+          await new AuthMethods().signOut();
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Logged Out successfully")));
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyApp()));
         },
@@ -146,14 +148,12 @@ var i;
         Container(
           child:Expanded(
             child: FirebaseAnimatedList(query: FirebaseDatabase.instance.reference().child("users").orderByChild("name"), itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index){
-              //print(snapshot.value);
               var currentKey = snapshot.key;
-             // print(currentKey);
-              if(snapshot.value==null)
-              return Container(child:Text("......"));
-              else{
+               if(snapshot.key==null)
+               return Container(child:Text("......"));
+               else{
                 Map ct = snapshot.value;
-                ct["Id"]= currentKey;
+                ct["Id"]= snapshot.key;
                 if(currentKey==currentId)
                 {
                   ct["me"]=true;
@@ -162,9 +162,9 @@ var i;
                 {
                   ct["me"]=false;
                 }
-                return listview(l:ct);
-              }
-            }),
+                return listview(ct);
+              }}
+            ),
           ), 
         )
       ],
@@ -174,3 +174,6 @@ var i;
     );
   }
 }
+/*
+
+*/

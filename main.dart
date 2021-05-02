@@ -1,7 +1,7 @@
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
-
+import 'package:device_info/device_info.dart';
 import "app.dart";
 import 'package:flutter/material.dart';
 import 'login.dart';
@@ -12,17 +12,19 @@ import 'networkstats.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'auth.dart';
 var email;
+var deviceId;
+var user;
 Future <void> main() async{ 
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  await Firebase.initializeApp();
+runApp(MyApp());
   }
 
 class MyApp extends StatelessWidget {
-  final Future<FirebaseApp> _fbapp = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Signup',
+      title: 'CTZ',
       theme: ThemeData(
         primaryColor: Colors.orange[400],
       ),

@@ -37,6 +37,10 @@ void initState()
   super.initState();
 }
 
+  var currentId;
+  var text;
+  var oppId;
+  var alreadyfrd;
   bool isLoading = false;
   String n,e;
   user u;
@@ -107,15 +111,14 @@ else
                           ElevatedButton(onPressed: () async{
                               Query _dbref;
   List doc =[];
-  var currentId;
-  var oppId;
-  final FirebaseAuth auth =  FirebaseAuth.instance;
+  
+  final FirebaseAuth auth = await  FirebaseAuth.instance;
     User user = auth.currentUser;
-    final currentuser = user.displayName;
+    var currentId = await auth.currentUser.uid;
+print(currentId.toString());
    final db = await FirebaseDatabase.instance.reference().child("users").once().then((DataSnapshot snap)  async {
     var keys = snap.value.keys;
       var values = snap.value;
-      print(values);
       if(snap.value==null)
       {
         return "";
@@ -124,14 +127,16 @@ else
        for(var key in keys)
     {
      // print(currentuser+name);
+     if(user.displayName==values[key]["name"])
+      {
+        currentId = key;
+        print(key);
+      } 
       if(searchList[index].name==values[key]["name"])
       {
         oppId = key;
-      }
-      if(currentuser==values[key]["name"])
-      {
-        currentId= key;
-      }      
+        print(key);
+      }   
     }
     if(currentId!=null&&oppId!=null)
       Navigator.push((context),MaterialPageRoute(builder: (context)=>Mainchat(searchList[index].name,oppId,currentId)));
@@ -142,14 +147,15 @@ else
      ).catchError((e){
        print(e.toString());
      });
-   }, child: Text("Message"))
+
+   }, child: Text("Message")),
                         ])),
                       ),
                         onTap: (){
                           setState(() {
                             isLoading=true;
                           });
-                          Navigator.push((context),MaterialPageRoute(builder: (context)=>A1()));
+                         // Navigator.push((context),MaterialPageRoute(builder: (context)=>A1()));
                         },
                       ),
                       );
@@ -199,113 +205,3 @@ SingleChildScrollView(
     
   }
 }
-
-
-/*
- Container(
-          child:Column( mainAxisSize: MainAxisSize.min,
-          children :<Widget>[
-          TextField(
-            controller: c1,
-            decoration: InputDecoration(labelText: "search",hintText: "Search",suffixIcon: IconButton(icon: Icon(Icons.search),onPressed: (){
-              setState(() {
-                isLoading=true;
-              });
-              searchres(c1.text);
-            },)
-            ),
-           ),
-          SingleChildScrollView(
-            child:Container(
-              height: 70,
-            padding: EdgeInsets.all(20),
-            decoration:BoxDecoration( borderRadius: new BorderRadius.circular(16.0),
-            color: Colors.green,),
-            child: ListView.builder(itemCount: searchList.length,itemBuilder: (context,index){
-             return Text(searchList[index].name.toString());
-          }),
-          ),
-          )])
-    )
-
-Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(borderRadius:new BorderRadius.circular(10),color: Colors.green),
-                    child:Text(searchList[index].name));
-
-
-SingleChildScrollView(
-        physics: ScrollPhysics(),
-        child: Column(
-          children: <Widget>[
-            TextField(
-            controller: c1,
-            decoration: InputDecoration(labelText: "search",hintText: "Search",suffixIcon: IconButton(icon: Icon(Icons.search),onPressed: (){
-              setState(() {
-                isLoading=true;
-              });
-              searchres(c1.text);
-            },)
-            ),
-           ),
-             ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount:searchList.length,
-                itemBuilder: (context,index){
-                  return  Text(searchList[index].name);
-                })
-          ],
-        ),
-
-
-
-
-Expanded(
-          child: Container(
-            child: Column(
-            children:<Widget> [
-              TextField(
-                controller: c1,
-                decoration: InputDecoration(labelText: "Search",hintText: "Search Friends",suffixIcon: Icon(Icons.search)),
-                
-              )
-            ],
-          ),
-          ), )
-          
-Container(
-          child:Column( mainAxisSize: MainAxisSize.min,children :<Widget>[
-          TextField(
-            controller: c1,
-            decoration: InputDecoration(labelText: "search",hintText: "Search",suffixIcon: IconButton(icon: Icon(Icons.search),onPressed: (){
-              setState(() {
-                isLoading=true;
-              });
-              searchres(c1.text);
-            },)
-            ),
-           ),
-          Container(
-            child: ListView.builder(itemCount: searchList.length,itemBuilder: (context,index){
-             searchList[index].name.toString();
-          }),
-          ),
-        ])
-    )          
-
-
-
-Row(
-        children: <Widget>[
-          Expanded(child: 
-          SizedBox(
-            height: 200,
-            child: ListView.builder(itemCount:searchList.length,itemBuilder: (context,index){
-              return Text(searchList[index].name);
-            }),
-          )
-          ),
-        ],
-        )     
-*/

@@ -2,12 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
+import 'package:wpg/request.dart';
 import 'package:wpg/search.dart';
 import "app.dart";
 import 'delete.dart';
 import 'search.dart';
 import 'edit.dart';
 import 'login.dart';
+import 'newsearch.dart';
 import 'report.dart';
 
 
@@ -18,13 +20,13 @@ final info="";
   final user = FirebaseAuth.instance.currentUser;
 
   List <String> items =[
-    "Chat","Search","Edit Profile","Report a Bug","Delete account"
+    "Chat","Search","Requests","Edit Profile","Report a Bug","Delete account"
   ];
   List <Icon> ic =[
-    Icon(Icons.chat,color:Colors.orange[400]),Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.report_problem_rounded,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
+    Icon(Icons.chat,color:Colors.orange[400]),Icon(Icons.search,color: Colors.orange[400],),Icon(Icons.add_alert,color: Colors.orange[400],),Icon(Icons.edit,color: Colors.orange[400],),Icon(Icons.report_problem_rounded,color: Colors.orange[400],),Icon(Icons.delete,color: Colors.orange[400])
   ];
   List routes = [
-    A1(),Search1(),Edit(user.uid),NewReport(),Delete()
+    A1(),NewSearch1(),MyRequests(user.uid),Edit(user.uid),NewReport(),Delete()
       ];
         return Container(
         child: Drawer(
@@ -57,7 +59,7 @@ final info="";
                 );
               })
               ),
-              Spacer(),
+  
               Container(
                 padding: EdgeInsets.all(2),
                 width: double.infinity,

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,11 +16,13 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
       {
         try
         {
-          await GoogleSignIn().disconnect();
+          // await GoogleSignIn().disconnect();
           await _auth.signOut();
+          return;
         }catch(e)
         {
           print(e.toString());
+          return;
         }
       }
 
@@ -59,44 +62,51 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
 
 
 
-// Future signInWithGoogle() async {
-//   // Trigger the authentication flow
-//   bool isSigningIn = true;
-//   final GoogleSignIn _googleSignIn = GoogleSignIn();
-//  final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-//   if(googleUser==null)
-//   {
-//     isSigningIn = false;
-//     return;
-//   }
-//   else{
-// try{
-//   // Obtain the auth details from the request
-//   final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+Future signInWithGoogleSilently() async {
+  
+  // Trigger the authentication flow
+  bool isSigningIn = true;
+  print("in");
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+ final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  if(googleUser==null)
+  {
+    isSigningIn = false;
+    print("Sd");
+    return;
+  }
+  else{
+try{
+  // Obtain the auth details from the request
+  final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
-//   // Create a new credential
-//   final GoogleAuthCredential credential = GoogleAuthProvider.credential(
-//     accessToken: googleAuth.accessToken,
-//     idToken: googleAuth.idToken,
-//   );
+  // Create a new credential
+  final GoogleAuthCredential credential = GoogleAuthProvider.credential(
+    accessToken: googleAuth.accessToken,
+    idToken: googleAuth.idToken,
+  );
 
 
-//   // Once signed in, return the UserCredential
-//   isSigningIn=false;
-//   return await FirebaseAuth.instance.signInWithCredential(credential);
-// }on PlatformException catch(e)
-// {
-//   print(e.toString());
-// }
-//   }
-// }
+  // Once signed in, return the UserCredential
+  isSigningIn=false;
+  print("sdf");
+  return await FirebaseAuth.instance.signInWithCredential(credential);
+}on PlatformException catch(e)
+{
+  print(e.toString());
+  return;
+}
+  }
+}
+
 
 Future signInWithGoogle() async {
   // Trigger the authentication flow
+  //Firebase.initializeApp();
   try{
   final googleUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
+ print("S");
   // 
 final GoogleAuthCredential credential = GoogleAuthProvider.credential(
     accessToken: googleAuth.accessToken,
@@ -105,6 +115,7 @@ final GoogleAuthCredential credential = GoogleAuthProvider.credential(
   // Once signed in, return the UserCredential
   await FirebaseAuth.instance.signInWithCredential(credential);
   final person = await FirebaseAuth.instance.currentUser;
+ 
   bool old=false;
   //final ud = await FirebaseDatabase.instance.reference().child("users").equalTo(person.uid);
     final dbq= await FirebaseDatabase.instance.reference().child("users").once().then((snap){
@@ -115,11 +126,13 @@ final GoogleAuthCredential credential = GoogleAuthProvider.credential(
         if(values[key]["email"] == googleUser.email)
         {
           old=true;
+          print("ds");
         }
       }
     });
 
   if(old==false){
+    print("Ss");
   final db= await FirebaseDatabase.instance.reference().child("users").child(person.uid).update({
                     "name":googleUser.displayName,
                     "email":googleUser.email,
@@ -127,12 +140,8 @@ final GoogleAuthCredential credential = GoogleAuthProvider.credential(
 
                   });             
   }
-
-
-  //Obtain the auth details from the request
-
-  // Create a new credential
-  
+  print("E d");
+  return;
   }
   on PlatformException catch(e)
   {

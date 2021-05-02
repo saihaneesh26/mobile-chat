@@ -74,7 +74,7 @@ static downloadingCallback(id,status,progress){
               // Saved with this method.
   var  dir =await getExternalStorageDirectory();
 
-  var id = await FlutterDownloader.enqueue(url:url,savedDir: dir.path,fileName:name ,showNotification: true,openFileFromNotification: true);
+  var id = await FlutterDownloader.enqueue(url:url,savedDir: dir.path,fileName:name ,showNotification: true,openFileFromNotification: false);
               setState(() {
                 isLoading=false;
               });

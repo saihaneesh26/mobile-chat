@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:package_info/package_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -83,12 +83,11 @@ Center(child: CircularProgressIndicator(),)
           // width: double.infinity,
           // decoration: BoxDecoration(color: Colors.red),
           child:Expanded(
-          child: FirebaseAnimatedList(query: FirebaseDatabase.instance.reference().child("report"), itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index)  {
+          child: FirebaseAnimatedList(query: FirebaseDatabase.instance.reference().child("report").orderByChild("time"), itemBuilder: (BuildContext context,DataSnapshot snapshot,Animation<double>animation,int index)  {
           int likes = snapshot.value["LIKES"]==null?0:snapshot.value["LIKES"];
           if(snapshot.value[FirebaseAuth.instance.currentUser.uid.toString()]!=null){
             isLiked = true;
           }
-
           if(snapshot.value==null)
           {
             return Text("no reports");
@@ -101,7 +100,7 @@ Center(child: CircularProgressIndicator(),)
               decoration: BoxDecoration(border: Border.all(width: 2)),
               padding: EdgeInsets.all(3),
               child: Column(children: [
-                Row(children:[Text("In Version "+c["Version"]),Spacer(),IconButton(icon:Icon(Icons.thumb_up_alt_outlined),onPressed: ()async{
+                Row(children:[Text("In Version "+c["Version"]),Spacer(),IconButton(icon:Icon(Icons.arrow_circle_up_outlined),onPressed: ()async{
                   setState(()  {
                     isLoading = true;
                   });
@@ -122,7 +121,7 @@ Center(child: CircularProgressIndicator(),)
                      setState((){
                        isLoading = false;
                   });
-                },), Text(likes.toString()+ "Likes"),]
+                },), Text(likes.toString()+ "Votes"),]
                 ),
                 Container(
                 width: double.infinity, 

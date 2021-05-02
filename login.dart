@@ -1,4 +1,5 @@
 import 'package:double_back_to_close_app/double_back_to_close_app.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,7 @@ import 'networkstats.dart';
 
 void main()
 {
+  Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -187,25 +189,25 @@ signIn()  async
                 SizedBox(width:20),
                   SizedBox(),
                   SignInButton(Buttons.GoogleDark, onPressed: ()async{
-                    AuthMethods authMethods = new AuthMethods();
+                   
                       setState(() {
                     isLoading=true;
                   });
                   try{
-                  await authMethods.signInWithGoogle();
-                  }on PlatformException catch(e)
-                  {
-                     setState(() {
+                  await new AuthMethods().signInWithGoogle();
+                   setState(() {
                     isLoading=false;
                   });
+                  }on PlatformException catch(e)
+                  {
+                    
                     Navigator.push(context,MaterialPageRoute(builder: (context)=>Login()));
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Try again"),));                  
                   }
                     setState(() {
                     isLoading=false;
                   });
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("welcome :"+FirebaseAuth.instance.currentUser.displayName),));                  
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=>A1()));
                   }),
 
                 ElevatedButton(onPressed: ()
