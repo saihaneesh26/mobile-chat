@@ -29,10 +29,12 @@ V1.0.6 28-04-2021
 ->overflow issues handeled
 
 V1.0.7 expectations
-->notifications
+->Requests
 
-Latest version 1.0.6.5is stable ... 29-04-2021
+V 1.0.6.5is stable ... 29-04-2021
 ->updated download issues
 ->updated the report page
 ->updated interface and chat message order
 
+V1.0.7 2-05-2021
+->Requests
